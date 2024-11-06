@@ -7,9 +7,6 @@ import uvicorn
 from dotenv import load_dotenv
 import os
 
-
-
-
 # Game settings
 class GameSettings:
     round_duration = 120  # Total round time in seconds (3 minutes)
@@ -28,7 +25,11 @@ class GameState:
         self.scores_ready_time = None
 
     def start_new_round(self):
-        self.current_word = random.choice(["python", "fastapi", "async", "loop", "function"])
+        """
+
+        :rtype: object
+        """
+        self.current_word = random.choice(["python", "fastapi", "async", "loop", "function","car","man"])
         self.scores = []
 
         now = datetime.utcnow()
