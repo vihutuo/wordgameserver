@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
@@ -9,10 +10,10 @@ import os
 
 # Game settings
 class GameSettings:
-    round_duration = 120  # Total round time in seconds (3 minutes)
-    gameplay_duration = 90  # Gameplay time in seconds (2 minutes)
-    submission_window = 95  # Score submission window in seconds
-    scores_ready_offset = 100  # Time when scores are ready for fetch
+    round_duration = 30  # Total round time in seconds (3 minutes)
+    gameplay_duration = 25  # Gameplay time in seconds (2 minutes)
+    submission_window = 26  # Score submission window in seconds
+    scores_ready_offset = 28  # Time when scores are ready for fetch
 
 
 # Game state
@@ -42,6 +43,12 @@ class GameState:
 game_state = GameState()
 
 
+async def manage_rounds():
+    while True:
+        game_state.start_new_round()  # Start a new round
+        await asyncio.sleep(GameSettings.round_duration)  # Wait for the round duration to elapse
+
+
 # Pydantic model for score submission
 class ScoreSubmission(BaseModel):
     player_name: str
@@ -52,8 +59,10 @@ class ScoreSubmission(BaseModel):
 # FastAPI app setup with lifespan context
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    game_state.start_new_round()  # Start the first game round on startup
-    print("Server startup: first game round started.")
+    #game_state.start_new_round()  # Start the first game round on startup
+    print("Server startup")
+    asyncio.create_task(manage_rounds())
+
     yield  # This is where the app runs
     print("Server shutdown: cleanup if necessary.")
 
