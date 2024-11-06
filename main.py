@@ -65,6 +65,48 @@ app = FastAPI(lifespan=lifespan)
 async def root():
     return {"message": "Hello"}
 
+@app.get("/game-state")
+async def game_state_info():
+    """Fetches the current game state with UTC timing information."""
+    current_time = datetime.utcnow()
+    if game_state.current_word and current_time < game_state.round_end_time:
+        return {
+            "round_status": "active",
+            "current_word": game_state.current_word,
+            "current_time_utc": current_time.isoformat() + "Z",
+            "game_end_time_utc": game_state.round_end_time.isoformat() + "Z",
+            "score_submission_deadline_utc": game_state.score_submission_deadline.isoformat() + "Z",
+            "scores_ready_time_utc": game_state.scores_ready_time.isoformat() + "Z",
+        }
+
+    if game_state.round_end_time:
+        time_until_next_round = (game_state.round_end_time - current_time).total_seconds()
+        return {
+            "round_status": "inactive",
+            "time_until_next_round": max(0, time_until_next_round)
+        }
+
+    game_state.start_new_round()
+    return {"round_status": "inactive", "time_until_next_round": GameSettings.round_duration}
+
+
+@app.get("/fetch-word")
+async def fetch_word():
+    """Fetches the word for the current round, along with timing information as UTC timestamps."""
+    current_time = datetime.utcnow()
+
+    if not game_state.current_word:
+        raise HTTPException(status_code=400, detail="No round is currently active.")
+
+    return {
+        "word": game_state.current_word,
+        "current_time_utc": current_time.isoformat() + "Z",
+        "game_end_time_utc": game_state.round_end_time.isoformat() + "Z",
+        "score_submission_deadline_utc": game_state.score_submission_deadline.isoformat() + "Z",
+        "scores_ready_time_utc": game_state.scores_ready_time.isoformat() + "Z",
+    }
+
+
 load_dotenv()
 if os.getenv('uvicorn') == "1":
     if __name__ == "__main__":
