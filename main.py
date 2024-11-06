@@ -10,10 +10,10 @@ import os
 
 # Game settings
 class GameSettings:
-    round_duration = 30  # Total round time in seconds (3 minutes)
-    gameplay_duration = 25  # Gameplay time in seconds (2 minutes)
-    submission_window = 26  # Score submission window in seconds
-    scores_ready_offset = 28  # Time when scores are ready for fetch
+    round_duration = 60  # Total round time in seconds (3 minutes)
+    gameplay_duration = 40  # Gameplay time in seconds (2 minutes)
+    submission_window = 42  # Score submission window in seconds
+    scores_ready_offset = 45  # Time when scores are ready for fetch
 
 
 # Game state
@@ -116,6 +116,28 @@ async def fetch_word():
         "scores_ready_time_utc": game_state.scores_ready_time.isoformat() + "Z",
     }
 
+
+@app.get("/get_scores")
+async def get_scores():
+    """Fetch the scores after the round ends."""
+    if not game_state.scores_ready_time or datetime.utcnow() < game_state.scores_ready_time:
+        return {"error": "Scores are not ready yet."}
+
+    return {"scores": game_state.scores}
+
+
+@app.post("/submit-score")
+async def submit_score(submission: ScoreSubmission):
+    """Submits the player's score for the round."""
+    current_time = datetime.utcnow()
+    if current_time > game_state.score_submission_deadline:
+        raise HTTPException(status_code=400, detail="Score submission period has ended.")
+
+    if submission.word != game_state.current_word:
+        raise HTTPException(status_code=400, detail="Submitted word does not match the current round's word.")
+
+    game_state.scores.append({"player": submission.player_name, "score": submission.score})
+    return {"status": "Score submitted successfully"}
 
 load_dotenv()
 if os.getenv('uvicorn') == "1":
