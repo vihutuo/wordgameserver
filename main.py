@@ -12,10 +12,10 @@ import os
 
 # Game settings
 class GameSettings:
-    round_duration = 3 * 60  # Total round time in seconds (3 minutes)
-    gameplay_duration = 2 * 60  # Gameplay time in seconds (2 minutes)
-    submission_window = 2 * 60 + 10  # Score submission window in seconds
-    scores_ready_offset = 2 * 60 + 20  # Time when scores are ready for fetch
+    round_duration = 120  # Total round time in seconds (3 minutes)
+    gameplay_duration = 90  # Gameplay time in seconds (2 minutes)
+    submission_window = 95  # Score submission window in seconds
+    scores_ready_offset = 100  # Time when scores are ready for fetch
 
 
 # Game state
