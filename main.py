@@ -23,7 +23,7 @@ class GameSettings:
 class GameState:
     def __init__(self, chosen_words_file,all_words_file):
         self.chosen_words_list = words_mod.load_words(chosen_words_file)
-        self.all_words_list = words_mod.load_words(all_words_file)
+        #self.all_words_list = words_mod.load_words(all_words_file)
 
         self.current_word = ""
         self.answers = []
@@ -38,9 +38,9 @@ class GameState:
         :rtype: object
         """
         self.current_word = random.choice(self.chosen_words_list)
-        print(len(self.all_words_list))
-        self.answers = words_mod.generate_valid_words(self.current_word,self.all_words_list,3)
-        print(self.answers)
+        #self.current_word = "burglar"
+        #self.answers = words_mod.generate_valid_words(self.current_word,self.all_words_list,3)
+       # print(len(self.answers))
         self.scores = []
 
         now = datetime.utcnow()
@@ -112,7 +112,10 @@ async def game_state_info():
     game_state.start_new_round()
     return {"round_status": "inactive", "time_until_next_round": GameSettings.round_duration}
 
-
+@app.get("/testme")
+async def testme():
+    v = words_mod.generate_valid_words("burglar", game_state.all_words_list)
+    return "gg"
 @app.get("/fetch-word")
 async def fetch_word():
     """Fetches the word for the current round, along with timing information as UTC timestamps."""
@@ -155,4 +158,4 @@ async def submit_score(submission: ScoreSubmission):
 load_dotenv()
 if os.getenv('uvicorn') == "1":
     if __name__ == "__main__":
-        uvicorn.run("main:app", port=8080, host="127.0.0.1", reload=True)
+        uvicorn.run("main:app", port=8080, host="127.0.0.1")

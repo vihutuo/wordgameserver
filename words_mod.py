@@ -8,7 +8,7 @@ def load_words(file_path):
         with open(file_path, 'r') as file:
             # Read all lines and strip any extra whitespace
             words = [line.strip() for line in file.readlines()]
-        return words
+        return list(set(words))
     except Exception as e:
         print(f"Error loading word list: {e}")
         return []
@@ -25,4 +25,4 @@ def generate_valid_words(letters, word_set, min_length=3):
             if candidate_word in word_set:
                 valid_words.append(candidate_word)  # Add valid word to the list
 
-    return valid_words
+    return valid_words  # Return the list of valid words
