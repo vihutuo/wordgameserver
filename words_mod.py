@@ -1,5 +1,11 @@
 # Function to generate valid words from given letters
 from itertools import permutations
+import random
+
+def ShuffleString(s):
+  L1=list(s)
+  random.shuffle(L1)
+  return "".join(L1)
 
 # Load words from the word list file
 

@@ -38,6 +38,7 @@ class GameState:
         :rtype: object
         """
         self.current_word = random.choice(self.chosen_words_list)
+        self.current_word = words_mod.ShuffleString(self.current_word)
         #self.current_word = "burglar"
         #self.answers = words_mod.generate_valid_words(self.current_word,self.all_words_list,3)
        # print(len(self.answers))
