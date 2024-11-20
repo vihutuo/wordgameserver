@@ -8,6 +8,9 @@ import uvicorn
 from dotenv import load_dotenv
 import os
 
+import words_mod
+
+
 # Game settings
 class GameSettings:
     round_duration = 60  # Total round time in seconds (3 minutes)
@@ -18,8 +21,12 @@ class GameSettings:
 
 # Game state
 class GameState:
-    def __init__(self):
+    def __init__(self, chosen_words_file,all_words_file):
+        self.chosen_words_list = words_mod.load_words(chosen_words_file)
+        self.all_words_list = words_mod.load_words(all_words_file)
+
         self.current_word = ""
+        self.answers = []
         self.scores = []
         self.round_end_time = None
         self.score_submission_deadline = None
@@ -30,7 +37,10 @@ class GameState:
 
         :rtype: object
         """
-        self.current_word = random.choice(["python", "fastapi", "async", "loop", "function","car","man"])
+        self.current_word = random.choice(self.chosen_words_list)
+        print(len(self.all_words_list))
+        self.answers = words_mod.generate_valid_words(self.current_word,self.all_words_list,3)
+        print(self.answers)
         self.scores = []
 
         now = datetime.utcnow()
@@ -40,7 +50,8 @@ class GameState:
         print(f"New round started with word: {self.current_word}")
 
 
-game_state = GameState()
+game_state = GameState("data/7_letter_popular_words_without_s.txt",
+                       "data/3_plus_letter_words.txt")
 
 
 async def manage_rounds():
@@ -83,10 +94,12 @@ async def game_state_info():
         return {
             "round_status": "active",
             "current_word": game_state.current_word,
+            "answers" : game_state.answers,
             "current_time_utc": current_time.isoformat() + "Z",
             "game_end_time_utc": game_state.round_end_time.isoformat() + "Z",
             "score_submission_deadline_utc": game_state.score_submission_deadline.isoformat() + "Z",
             "scores_ready_time_utc": game_state.scores_ready_time.isoformat() + "Z",
+
         }
 
     if game_state.round_end_time:
