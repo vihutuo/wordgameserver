@@ -13,10 +13,10 @@ import words_mod
 
 # Game settings
 class GameSettings:
-    round_duration = 120  # Total round time in seconds (3 minutes)
-    gameplay_duration = 90  # Gameplay time in seconds (2 minutes)
-    submission_window = 92  # Score submission window in seconds
-    scores_ready_offset = 95  # Time when scores are ready for fetch
+    round_duration = 80  # Total round time in seconds (3 minutes)
+    gameplay_duration = 63  # Gameplay time in seconds (2 minutes)
+    submission_window = 65  # Score submission window in seconds
+    scores_ready_offset = 69  # Time when scores are ready for fetch
 
 
 # Game state
