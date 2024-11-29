@@ -13,10 +13,10 @@ import words_mod
 
 # Game settings
 class GameSettings:
-    round_duration = 60  # Total round time in seconds (3 minutes)
-    gameplay_duration = 40  # Gameplay time in seconds (2 minutes)
-    submission_window = 42  # Score submission window in seconds
-    scores_ready_offset = 45  # Time when scores are ready for fetch
+    round_duration = 120  # Total round time in seconds (3 minutes)
+    gameplay_duration = 90  # Gameplay time in seconds (2 minutes)
+    submission_window = 92  # Score submission window in seconds
+    scores_ready_offset = 95  # Time when scores are ready for fetch
 
 
 # Game state
@@ -139,7 +139,7 @@ async def get_scores():
     """Fetch the scores after the round ends."""
     if not game_state.scores_ready_time or datetime.utcnow() < game_state.scores_ready_time:
         return {"error": "Scores are not ready yet."}
-
+    game_state.scores.sort(key=lambda x: x["score"], reverse=True)
     return {"scores": game_state.scores}
 
 
